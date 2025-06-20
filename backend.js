@@ -7,6 +7,7 @@
 
 require('dotenv').config();
 console.log('MONGO_URI:', process.env.MONGO_URI);
+const fetch = require('node-fetch');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -138,6 +139,36 @@ app.post('/tests/:id/submit', async (req, res) => {
   res.json({ score: totalScore, resultSummary });
 });
 
+
+app.post('/chat', async (req, res) => {
+  const { message } = req.body;
+  if (!message) return res.status(400).json({ error: 'No message provided.' });
+
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'mistralai/mistral-7b-instruct', // You can change model here
+        messages: [
+          { role: 'system', content: 'You are a kind and helpful mental health assistant.' },
+          { role: 'user', content: message }
+        ]
+      })
+    });
+
+    const data = await response.json();
+    const reply = data?.choices?.[0]?.message?.content || "Sorry, I couldn't respond.";
+    res.json({ reply });
+
+  } catch (err) {
+    console.error('Chat API error:', err);
+    res.status(500).json({ error: 'Failed to fetch AI response.' });
+  }
+});
 // ------------------ START SERVER ------------------
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
