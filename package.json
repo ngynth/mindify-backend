@@ -7,12 +7,13 @@
     "start": "node backend.js"
   },
   "dependencies": {
-    "body-parser": "^1.20.2",
+    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "mongoose": "^7.6.1"
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "mongoose": "^7.8.7"
   },
   "author": "Mindify Team",
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": []
 }
